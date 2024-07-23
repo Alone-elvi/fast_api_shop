@@ -13,50 +13,23 @@ from crud.product import create_product
 from crud.shop import create_shop
 
 
-from models.user import User
+
+from routers import users, shops, products, categories, main, orders
 
 
 app = FastAPI()
 
 
-@app.get("/")
-def home():
-    return {"message": "First FastAPI app"}
+app.include_router(users.router)
+app.include_router(shops.router)
+app.include_router(products.router)
+app.include_router(categories.router)
+app.include_router(orders.router)
+app.include_router(main.router)
 
+if __name__ == "__main__":
+    import uvicorn
 
-@app.get("/users/")
-def read_users(db: Session = Depends(get_db)):
-    return db.query(User).all()
+    uvicorn.run("main:app", reload=True)
+    print("RabbitMQ order processor started")
 
-
-@app.post("/users/", response_model=UserCreate)
-def create_new_user(user: UserCreate, db: Session = Depends(get_db)):
-    db_user = create_user(db, user)
-    return db_user
-
-
-@app.put("/users/{user_id}", response_model=UserUpdate)
-def update_existing_user(user_id: int, user: UserUpdate, db: Session = Depends(get_db)):
-    try:
-        db_user = update_user(db, user_id, user)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    return db_user
-
-
-@app.post("/shops/", response_model=ShopCreate)
-def create_new_shop(shop: ShopCreate, db: Session = Depends(get_db)):
-    db_shop = create_shop(db, shop)
-    return db_shop
-
-
-@app.post("/products/", response_model=ProductCreate)
-def create_new_product(product: ProductCreate, db: Session = Depends(get_db)):
-    db_product = create_product(db, product)
-    return db_product
-
-
-@app.post("/categories/", response_model=CategoryCreate)
-def create_new_category(category: CategoryCreate, db: Session = Depends(get_db)):
-    db_category = create_category(db, category)
-    return db_category

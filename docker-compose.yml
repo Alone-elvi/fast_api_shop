@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment: 
+      POSTGRES_USER: spint2
+      POSTGRES_PASSWORD: abirvalg
+      POSTGRES_DB: postgres
+    ports:
+      - 5436:5432
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - 5676:5672
+      - 15676:15672
+    volumes:
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabitmq 
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+      - rabbitmq_go_net
+
+  web:
+    build: .
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - rabbitmq
+    environment:
+      DATABASE_URL: "postgresql://spint2:abirvalg@db:5436/postgres"
+      RABBITMQ_URL: "amqp://guest:guest@rabbitmq:5676/"
+
+networks:
+  rabbitmq_go_net:
+    driver: bridge
