@@ -11,4 +11,3 @@ class Category(Base):
     description = Column(String)
 
     products = relationship("Product", back_populates="category", cascade="all, delete")
-    

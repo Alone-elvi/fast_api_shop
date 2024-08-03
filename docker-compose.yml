@@ -2,7 +2,8 @@ version: '3.9'
 
 services:
   db:
-    image: postgres
+    image: postgres:16-alpine
+    container_name: postgres
     restart: always
     environment: 
       POSTGRES_USER: spint2
@@ -13,7 +14,7 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
-    container_name: rabbitmq
+    container_name: rabbitmq-alpine
     ports:
       - 5676:5672
       - 15676:15672

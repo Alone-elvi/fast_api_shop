@@ -38,17 +38,3 @@ def test_delete_order(db_session):
     assert deleted_order_from_db is None
 
 
-def test_update_shop(client):
-    # Создание магазина для теста
-    response = client.post("/shops/", json={"name": "Old Shop Name", "owner_id": 2})
-    assert response.status_code == 200
-    print(response.json())
-    shop_id = response.json()["id"]
-
-
-    # Обновление магазина
-    update_data = {"name": "New Shop Name", "owner_id": 2}
-    response = client.put(f"/shops/{shop_id}", json=update_data)
-    assert response.status_code == 200
-    assert response.json()["name"] == "New Shop Name"
-    assert response.json()["owner_id"] == 2

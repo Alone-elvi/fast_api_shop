@@ -20,7 +20,7 @@ def create_new_user(user: UserCreate, db: Session = Depends(get_db)):
     return db_user
 
 
-@router.put("/users/{user_id}", response_model=UserUpdate)
+@router.patch("/users/{user_id}", response_model=UserUpdate)
 def update_existing_user(user_id: int, user: UserUpdate, db: Session = Depends(get_db)):
     try:
         db_user = update_user(db, user_id, user)

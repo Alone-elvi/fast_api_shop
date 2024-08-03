@@ -31,3 +31,23 @@ def update_shop(db: Session, shop_id: int, shop: ShopUpdate):
         raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
 
     return db_shop
+
+
+def get_shop(db: Session, shop_id: int):
+    db_shop = db.query(Shop).filter(Shop.id == shop_id).first()
+
+    if not db_shop:
+        raise HTTPException(status_code=404, detail="Shop not found")
+    
+    return db_shop
+
+
+def delete_shop(db: Session, shop_id: int):
+    db_shop = db.query(Shop).filter(Shop.id == shop_id).first()
+
+    if not db_shop:
+        raise HTTPException(status_code=404, detail="Shop not found")
+
+    db.delete(db_shop)
+    db.commit()
+    return {"message": "Shop deleted"}
