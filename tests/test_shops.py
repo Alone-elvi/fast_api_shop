@@ -2,33 +2,47 @@ import pytest
 from conftest import client
 
 
-def test_create_shop(client):
-    shop = {"name": "Test Shop", "owner_id": 1}
-    response = client.post("/shops/", json=shop)
+@pytest.mark.parametrize("shop_id", [1, 2, 3])
+def test_create_shop(client, shop_id):
+    shop = {"name": "Test Shop", "owner_id": shop_id}
+    response = client.post(f"/shops/", json=shop)
     assert response.status_code == 200
-    assert response.json() == {"id": 1, "name": "Test Shop", "owner_id": 1}
+    assert response.json() == {"id": shop_id, "name": "Test Shop", "owner_id": shop_id}
 
 
-def test_get_shop(client):
-    response = client.get("/shops/1")
+@pytest.mark.parametrize("shop_id", [1, 2, 3])
+def test_get_shop(client, shop_id):
+    response = client.get(f"/shops/{shop_id}")
     assert response.status_code == 200
     assert response.json() == {
-        "id": 1,
+        "id": shop_id,
         "name": "Test Shop",
-        "owner_id": 1,
+        "owner_id": shop_id,
     }
 
 
-def test_update_shop(client):
-    shop = {"name": "Updated Shop", "owner_id": 1}
-    response = client.patch("/shops/1", json=shop)
+@pytest.mark.parametrize("shop_id", [1, 2, 3])
+def test_update_shop(client, shop_id):
+    shop = {"name": "Updated Shop", "owner_id": shop_id}
+    response = client.patch(f"/shops/{shop_id}", json=shop)
     assert response.status_code == 200
     assert response.json() == {
-        "id": 1,
+        "id": shop_id,
         "name": "Updated Shop",
-        "owner_id": 1,
+        "owner_id": shop_id,
     }
 
-def test_delete_shop(client):
-    response = client.delete("/shops/1")
+
+@pytest.mark.parametrize("shop_id", [5, 6, 7])
+def test_get_shops_error_xfail(client, shop_id):
+    if shop_id in [5, 6, 7]:
+        pytest.xfail("This shop_id is expected to fail")
+    response = client.get(f"/shops/{shop_id}")
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Shop not found"}
+
+
+@pytest.mark.parametrize("shop_id", [1, 2, 3])
+def test_delete_shop(client, shop_id):
+    response = client.delete(f"/shops/{shop_id}")
     assert response.json() == {"message": "Shop deleted"}
