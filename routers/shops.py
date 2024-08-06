@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends
+# routers/shops.py
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from db import get_db
 from schemas.shop import ShopCreate, ShopUpdate, ShopResponse
@@ -10,6 +11,8 @@ router = APIRouter()
 @router.get("/shops/{shop_id}", response_model=ShopResponse)
 def read_shop(shop_id: int, db: Session = Depends(get_db)):
     db_shop = get_shop(db, shop_id)
+    if db_shop is None:
+        raise HTTPException(status_code=404, detail="Shop not found")
     return db_shop
 
 

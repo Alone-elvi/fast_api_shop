@@ -1,5 +1,4 @@
 import pytest
-from conftest import client
 
 
 @pytest.mark.parametrize("shop_id", [1, 2, 3])

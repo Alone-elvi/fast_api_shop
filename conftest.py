@@ -1,3 +1,4 @@
+# conftest.py
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -44,3 +45,11 @@ def db_session():
         yield session
     finally:
         session.close()
+
+
+@pytest.fixture(scope="class")
+def db_class(request):
+    class DummyDB:
+        pass
+
+    request.cls.db = DummyDB()

@@ -1,3 +1,4 @@
+# crud/shop.py
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from models.shop import Shop
@@ -34,11 +35,9 @@ def update_shop(db: Session, shop_id: int, shop: ShopUpdate):
 
 
 def get_shop(db: Session, shop_id: int):
-    db_shop = db.query(Shop).filter(Shop.id == shop_id).first()
-
-    if not db_shop:
-        raise HTTPException(status_code=404, detail="Shop not found")
-    
+    db_query = db.query(Shop)
+    db_filtered = db_query.filter(Shop.id == shop_id)
+    db_shop = db_filtered.first()
     return db_shop
 
 
